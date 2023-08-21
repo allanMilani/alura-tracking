@@ -1,27 +1,73 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+  <main class="columns is-gapless is-multiline" :class="{ 'modo-escuro': modoEscuroAtivo }">
+    <div class="column is-one-quarter">
+      <BarraLaretal @aoTemaAlterado="trocarTema" />
+    </div>
+    <div class="column is-three-quarter conteudo">
+      <FormularioTrack @aoSalvarTarefa="salvarTarefa" />
+      <div class="lista">
+        <TarefaComponent v-for="(tarefa, index) in tarefas" :key="index" :tarefa="tarefa"/>
+        <BoxComponent v-if="listEstaVazia">Você não está muito produtivo hoje :( </BoxComponent>
+      </div>
+    </div>
+  </main>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import HelloWorld from './components/HelloWorld.vue';
+import BarraLaretal from './components/BarraLaretal.vue';
+import FormularioTrack from './components/FormularioTrack.vue';
+import TarefaComponent from './components/TarefaComponent.vue';
+import BoxComponent from './components/BoxComponent.vue';
+import ITarefa from './interfaces/ITarefa'
 
 export default defineComponent({
   name: 'App',
   components: {
-    HelloWorld
+    BarraLaretal,
+    FormularioTrack,
+    TarefaComponent,
+    BoxComponent
+  },
+  data(){
+    return {
+      tarefas: [] as ITarefa[],
+      modoEscuroAtivo: false
+    }
+  },
+  computed: {
+    listEstaVazia() : boolean{
+      return this.tarefas.length <= 0
+    }
+  },
+  methods: {
+    salvarTarefa(tarefa: ITarefa){
+      this.tarefas.push(tarefa);
+    },
+    trocarTema(modeEscuroAtivo: boolean){
+      this.modoEscuroAtivo = modeEscuroAtivo
+
+    }
   }
 });
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+  .lista{
+    padding: 1.5rem;
+  }
+  
+  main {
+    --bg-primario: #fff;
+    --texto-primario: #000;
+  }
+
+  main.modo-escuro{
+    --bg-primario: #2b2d42;
+    --texto-primario: #ddd;
+  }
+
+  .conteudo{
+    background: var(--bg-primario);
+  }
 </style>
